@@ -1,60 +1,33 @@
-# pre_entrega
-Un cliente asincrónico universal para interactuar con múltiples proveedores de LLM (OpenAI, Anthropic, Google Gemini) usando una **interfaz común**.
+# Pipeline de Extracción de Entidades Técnicas
 
-## 🎯 Características
+Pipeline asíncrono construido con LangChain y LCEL. Recibe un texto técnico sin
+procesar y devuelve un objeto validado con:
 
-- ✅ Soporte para **OpenAI**, **Anthropic** y **Google Gemini**
-- ✅ Interfaz **intercambiable** (cambia de proveedor sin cambiar código)
-- ✅ Modo **streaming** (tokens en tiempo real)
-- ✅ Modo **normal** (respuesta completa)
-- ✅ Validación con **Pydantic**
-- ✅ Manejo de excepciones y errores
-- ✅ API keys seguras con `SecretStr`
+- `tecnologias`: lista no vacía de tecnologías detectadas.
+- `nivel_de_criticidad`: `baja`, `media` o `alta`.
+- `resumen_tecnico`: resumen breve del contenido.
 
----
+## Estructura
 
-## 📋 Requisitos
+- `schemas.py`: contrato de salida con Pydantic.
+- `chain.py`: prompt, modelo, salida estructurada y reintentos.
+- `main.py`: mini-script de prueba asíncrono.
 
-- Python 3.12+
-- pip
-
----
-
-## 🚀 Instalación
-
-### 1. Clonar el repositorio
+## Preparación
 
 ```bash
-git clone https://github.com/tu-usuario/unified-llm-client.git
-cd unified-llm-client
-```
-
-### 2. Crear entorno virtual
-
-```bash
-# Windows (Git Bash):
 python -m venv venv
 source venv/Scripts/activate
-
-# Mac/Linux:
-python3 -m venv venv
-source venv/bin/activate
-```
-
-### 3. Instalar dependencias
-
-```bash
 pip install -r requirements.txt
 ```
 
----
+Copiá `.env.example` como `.env` y completá `GOOGLE_API_KEY`.
 
-## 🔐 Configurar Variables de Entorno
-
-### 1. Copiar archivo de ejemplo
+## Ejecución
 
 ```bash
-cp .env.example .env
+venv/Scripts/python.exe main.py
 ```
 
-### 2. Agregar tus API keys en `.env`
+El flujo usará `ChatPromptTemplate`, `with_structured_output()` y `with_retry()`.
+La respuesta final será un objeto Pydantic validado.
