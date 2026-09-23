@@ -1,3 +1,11 @@
-langchain
+langchain==1.4.0
+langchain-chroma
+langchain-huggingface
 langchain-google-genai
+langchain-text-splitters
+chromadb
+openai
+tiktoken
+sentence-transformers
+pydantic>=2.7
 python-dotenv
