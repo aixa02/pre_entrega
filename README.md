@@ -43,7 +43,14 @@ pre_entrega/
 
 ## Instalacion
 
-Desde la carpeta raiz del proyecto, crear y activar el entorno virtual.
+Clonar el repositorio y entrar en su carpeta:
+
+```bash
+git clone https://github.com/aixa02/pre_entrega.git
+cd pre_entrega
+```
+
+Crear y activar el entorno virtual desde la carpeta raiz del proyecto.
 
 En Windows PowerShell:
 
@@ -69,6 +76,18 @@ python -m pip install -r requirements.txt
 
 Crear `.env` a partir de `.env.example` y completar la clave de Gemini:
 
+En Git Bash:
+
+```bash
+cp .env.example .env
+```
+
+En Windows PowerShell:
+
+```powershell
+Copy-Item .env.example .env
+```
+
 ```env
 GOOGLE_API_KEY=tu_clave_de_gemini
 ```
@@ -85,10 +104,20 @@ venv/Scripts/python.exe scripts/ingest.py
 
 La primera ejecucion crea `vectorstore/` y la coleccion persistente `documentos` en ChromaDB. Si se agregan o modifican documentos, se puede eliminar `vectorstore/` y volver a ejecutar la ingesta para reconstruir la base.
 
+Salida verificada con los cuatro documentos del dataset:
+
+```text
+Indexando 4 fragmentos...
+Base de datos creada: 4 fragmentos en ./vectorstore
+Documentos procesados: 4
+```
+
 ## Ejecutar el flujo RAG
 
+Ejecutar como módulo desde la raiz del repositorio:
+
 ```bash
-venv/Scripts/python.exe scripts/rag_chain.py
+venv/Scripts/python.exe -m scripts.rag_chain
 ```
 
 El script ejecuta dos pruebas:
@@ -105,11 +134,29 @@ La salida tiene este formato Pydantic:
 }
 ```
 
+### Resultados verificados
+
+Pregunta con respuesta en `data/validation.md`:
+
+```text
+Pregunta: ¿Qué estado HTTP devuelve FastAPI cuando el cuerpo no cumple el esquema?
+Respuesta: Cuando el cuerpo de la solicitud no cumple el esquema, FastAPI responde automáticamente con el estado HTTP 422 y detalles sobre los errores de validación.
+Referencias: ["validation.md"]
+```
+
+Pregunta trampa, cuya respuesta no aparece en el corpus:
+
+```text
+Pregunta: ¿Quién creó FastAPI?
+Respuesta: No lo sé, esa información no está en mis documentos
+Referencias: []
+```
+
 ## Componentes principales
 
 ### `scripts/ingest.py`
 
-Carga documentos, los limpia, aplica `RecursiveCharacterTextSplitter` con 500 tokens de tamaño y 50 tokens de solapamiento, y los persiste en ChromaDB.
+Carga documentos, los limpia, aplica `RecursiveCharacterTextSplitter` con conteo de tokens mediante `tiktoken` (`cl100k_base`), 500 tokens de tamaño y 50 tokens de solapamiento, y los persiste en ChromaDB.
 
 ### `scripts/retriever.py`
 

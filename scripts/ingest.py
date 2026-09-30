@@ -1,5 +1,4 @@
 # scripts/ingest.py
-import os
 import chromadb
 from chromadb.utils import embedding_functions
 from langchain_text_splitters import RecursiveCharacterTextSplitter
@@ -21,15 +20,11 @@ class DocumentIngester:
             metadata={"hnsw:space": "cosine"}
         )
         
-        # Configurar splitter: 500 tokens, overlap 50
-        def token_counter(text: str) -> int:
-            # Aproximación: 1 token ≈ 4 caracteres
-            return len(text) // 4
-        
-        self.splitter = RecursiveCharacterTextSplitter(
+        # Configurar splitter con conteo real de tokens: 500 y overlap 50
+        self.splitter = RecursiveCharacterTextSplitter.from_tiktoken_encoder(
+            encoding_name="cl100k_base",
             chunk_size=500,
             chunk_overlap=50,
-            length_function=token_counter,
             separators=["\n\n", "\n", ". ", " ", ""]
         )
     
